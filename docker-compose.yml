@@ -1,0 +1,50 @@
+#
+# ----------------
+# Este es el archivo que permite configurar la infraestructura y herramientas
+# de los micro servicios
+# -----------------
+
+# Los servicios que van a integrar la aplicación
+services:
+  # Primera base de datos
+  mysql1:
+    image: mysql:8.0 # Imagen oficial de MySQL
+    container_name: mysql_db_1
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password # Contraseña usuario root
+      MYSQL_DATABASE: ecommerce_users    # Nombre de la base de datos
+      MYSQL_USER: user                   # Usuario no-root
+      MYSQL_PASSWORD: user_password      # Contraseña usuario no-root
+    volumes:
+      - mysql-data-1:/var/lib/mysql  # Volumen persistente para los datos
+    ports:
+      - "3306:3306"  # Mapea el puerto 3306 del contenedor al host
+    networks:
+      - ecommerce-net
+
+  # Segunda base de datos
+  mysql2:
+    image: mysql:8.0 # Imagen oficial de MySQL
+    container_name: mysql_db_2
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password1 # Contraseña usuario root
+      MYSQL_DATABASE: ecommerce_orders    # Nombre de la base de datos
+      MYSQL_USER: user2                   # Usuario no-root
+      MYSQL_PASSWORD: user_password2      # Contraseña usuario no-root
+    volumes:
+      - mysql-data-2:/var/lib/mysql  # Volumen persistente para los datos
+    ports:
+      - "3307:3306"  # Mapea el puerto 3306 del contenedor al 3307 del host
+    networks:
+      - ecommerce-net
+
+# Configuración global de redes y volúmenes
+networks:
+  ecommerce-net:
+    driver: bridge # Red personalizada para la comunicación entre contenedores
+
+volumes:
+  mysql-data-1: # Volumen para la primera base de datos
+    driver: local
+  mysql-data-2: # Volumen para la segunda base de datos
+    driver: local
